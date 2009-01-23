@@ -10,7 +10,8 @@ class ActivityBehavior extends ModelBehavior {
         "saveOn" => array(
             "conditions" => array(),
             "created" => true
-        )
+        ),
+        'userForeignKey' => 'user_id'
     );
 
     var $runtime = array();
@@ -139,13 +140,14 @@ class ActivityBehavior extends ModelBehavior {
     }
 
     function getUserId(&$Model, $primaryKey) {
+        $userForeignKey = $this->settings[$Model->alias]['userForeignKey'];
         $user_id = $Model->find("first", array(
-            "fields" => "user_id", 
+            "fields" => array($userForeignKey), 
             "recursive" => -1, 
             "conditions" => array( $Model->alias. '.' .$Model->primaryKey => $primaryKey)
         ));
         if($user_id) {
-            return $user_id[$Model->alias]['user_id'];
+            return $user_id[$Model->alias][$userForeignKey];
         }
         return $user_id;
     }
